@@ -25,7 +25,7 @@ export class Login extends React.Component {
   }
 
   goToIndex() {
-    this.context.router.push('/posts');
+    this.context.router.push('/stocks');
   }
 
   render() {

@@ -3,12 +3,17 @@ import * as actionTypes from './actionTypes';
 
 const initialState = Immutable({
   byId: {},
-  params: {}
+  params: {},
+  index: {}
 });
 
 export default (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.FETCH_ONE_SUCCESS:
+    case actionTypes.FETCH_INDEX_SUCCESS:
+      return state.merge({
+        index: action.payload || {}
+      });
     case actionTypes.FETCH_COLLECTION_SUCCESS:
       return state.merge({
         params: action.payload.params || {},

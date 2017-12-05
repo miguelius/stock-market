@@ -11,12 +11,17 @@ export const StockList = ({stocks, onDelete}) => {
         <th>Last Dividend</th>
         <th>Fixed Dividend</th>
         <th>Par Value</th>
-        <th>Price</th>
+        <th>Price*</th>
       </tr>
       </thead>
       <tbody>
       {stocks.map(stock => StockListRow({stock, onDelete}))}
       </tbody>
+      <tfoot>
+        <tr>
+          <td colSpan={6} ><i>* Price column is computed as the Volume Weight Price of the last 5 minutes trades.</i></td>
+        </tr>
+      </tfoot>
     </table>
   )
 };

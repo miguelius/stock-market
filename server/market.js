@@ -30,6 +30,7 @@ function Stock(symbol, type, lastDividend, fixedDividend, parValue) {
 	this.lastDividend = lastDividend;
 	this.fixedDividend = fixedDividend;
 	this.parValue = parValue;
+	this.id = symbol;
 }
 
 Stock.prototype.dividendYield = function(price) {

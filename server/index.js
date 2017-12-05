@@ -48,9 +48,14 @@ app.get('/stock', function(req, res) {
   let offset = req.query.offset || 0;
   let count = req.query.count || 5;
   let sortBy = req.query.sortBy;
+  let q = req.query.q;
 
   // gets the stocks as a list
-  let stocks = Object.entries(Merval.stocks);
+  let stocks = _.map(Merval.stocks, s=> s);
+  
+  if (q) {
+    stocks = _.filter(stocks, s => (s.symbol.toLowerCase().indexOf(q.toLowerCase()) != -1));
+  }
 
   if (sortBy) {
     let sortOrder = 1;
@@ -59,13 +64,13 @@ app.get('/stock', function(req, res) {
         sortBy = sortBy.substr(1);
     }
     stocks = stocks.sort( (a,b) => {
-      var result = (a[1][sortBy] < b[1][sortBy]) ? -1 : (a[1][sortBy] > b[1][sortBy]) ? 1 : 0;
+      var result = (a[sortBy] < b[sortBy]) ? -1 : (a[sortBy] > b[sortBy]) ? 1 : 0;
       return result * sortOrder;
     });
   }
 
   // clones objects
-  let items = stocks.slice(offset, offset + count).map( x=> _.clone(x[1]) );
+  let items = stocks.slice(offset, offset + count).map( x=> _.clone(x) );
 
   // computes price and hides trades
   items.forEach( x => { x.price = x.volumeWeightPrice(); delete(x.trades); } )

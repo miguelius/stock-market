@@ -1,4 +1,4 @@
-export * from './Dashboard';
+export * from './MervalIndex';
 export * from  './Login';
-export * from './PostsEdit';
-export * from './PostsIndex';
+export * from './StocksEdit';
+export * from './StocksIndex';

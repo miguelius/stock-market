@@ -1,8 +1,8 @@
 import { combineEpics } from 'redux-observable';
 import { values } from 'lodash';
 
-import * as postsEpics from './posts/epics';
+import * as stocksEpics from './stocks/epics';
 
 export default combineEpics(
-  ...values(postsEpics)
+  ...values(stocksEpics)
 );

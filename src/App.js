@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import { Navbar, Nav, NavItem, Brand } from 'react-bootstrap';
 import { IndexLinkContainer, LinkContainer } from 'react-router-bootstrap';
 import { Route, IndexRoute, Router, hashHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
@@ -8,9 +8,9 @@ import store from './store';
 import { Auth } from './services/Auth';
 import {
   Login,
-  Dashboard,
-  PostsIndex,
-  PostsEdit,
+  MervalIndex,
+  StocksIndex,
+  StocksEdit,
 } from './containers/index';
 
 require('./app.scss');
@@ -20,13 +20,15 @@ const history = syncHistoryWithStore(hashHistory, store);
 let App = ({children}) => {
   return (
     <div>
-      <Navbar>
+      <Navbar inverse={true}>
+        <Navbar.Brand>
+        <a href="#">MERVAL</a></Navbar.Brand>
         <Nav>
           <IndexLinkContainer to="/">
-            <NavItem>Dashboard</NavItem>
+            <NavItem>The Index</NavItem>
           </IndexLinkContainer>
-          <LinkContainer to="/posts">
-            <NavItem>Posts</NavItem>
+          <LinkContainer to="/stocks">
+            <NavItem>Stocks</NavItem>
           </LinkContainer>
         </Nav>
         {Auth.authenticated() && <Nav className="pull-right">
@@ -51,10 +53,10 @@ export default () => {
       <Router history={history}>
         <Route path="/login" component={Login} />
         <Route path="/" component={App}>
-          <IndexRoute component={Dashboard} />
-          <Route path="/posts" component={PostsIndex} />
-          <Route path="/posts/new" component={PostsEdit} />
-          <Route path="/posts/:postId" component={PostsEdit} />
+          <IndexRoute component={MervalIndex} />
+          <Route path="/stocks" component={StocksIndex} />
+          <Route path="/trade/new" component={StocksEdit} />
+          <Route path="/stocks/:stockId" component={StocksEdit} />
         </Route>
       </Router>
     </Provider>
