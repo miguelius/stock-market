@@ -20,8 +20,11 @@ export class Login extends React.Component {
   }
 
   handleSubmit() {
+    console.log('eu');
     Auth.login(this.state)
-     .then(() => this.goToIndex());
+     .then(() => { 
+        this.goToIndex() 
+      });
   }
 
   goToIndex() {

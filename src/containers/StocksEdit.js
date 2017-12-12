@@ -1,9 +1,13 @@
+import 'react-select/dist/react-select.css';
+
 import React from 'react';
 import Textarea from 'react-textarea-autosize';
 import {Form, FormGroup, ControlLabel, FormControl} from 'react-bootstrap'
 import { stocksActions, stocksSelectors } from '../store/stocks/index';
 import { connect } from 'react-redux';
 import { isEqual } from 'lodash';
+import { Async } from 'react-select';
+import { Select } from 'react-select';
 
 @connect(
   (state, props) => {
@@ -23,13 +27,39 @@ export class StocksEdit extends React.Component {
     stock: React.PropTypes.object,
   };
 
+  getTradeTypeOptions = (input, callback) => {
+    setTimeout(() => {
+      callback(null, {
+        options: [
+          { value: 'buy', label: 'Buy' },
+          { value: 'sell', label: 'Sell' }
+        ],
+        // CAREFUL! Only set this to true when there are no more options,
+        // or more specific queries will not be sent to the server.
+        complete: true
+      });
+    }, 500);
+  };
+
+  getOptions = (input, callback) => {
+    let url =  `http://localhost:8081/stock` + (input ? (`?q=`+input) : ``);
+    return fetch(url)
+      .then((response) => {
+        return response.json();
+      }).then((json) => {
+        console.log(json.items);
+        let stocks = json.items.map(s => { return { 'value':  s.symbol, 'label': s.symbol} })
+        return { options: stocks };
+      })
+  };
+
   constructor(props, context) {
     super(props, context);
 
     this.state = {
       ...this.state,
       stockId: this.props.params.stockId,
-      stock: {symbol: '', time: Date.now(), quantity: 0, type: '', price: 0 }
+      stock: {stock: '', time: new Date().toISOString(), quantity: 0, type: '', price: 0 }
     };
   }
 
@@ -45,6 +75,11 @@ export class StocksEdit extends React.Component {
     }
   }
 
+  handleSelectChange(field, e) {
+    const stock = Object.assign({}, this.state.stock, {[field]: e.value});
+    this.setState(Object.assign({}, this.state, {stock}));
+  }
+
   handleChange(field, e) {
     const stock = Object.assign({}, this.state.stock, {[field]: e.target.value});
     this.setState(Object.assign({}, this.state, {stock}));
@@ -58,27 +93,26 @@ export class StocksEdit extends React.Component {
     }
   }
 
+  
   render() {
     return (
       <form onSubmit={this.handleSubmit.bind(this)} noValidate>
         <div className="form-group">
           <label className="label-control">Stock</label>
-          <input
-            type="text"
-            className="form-control"
-            value={this.state.stock.symbol}
-            onChange={this.handleChange.bind(this, 'symbol')} />
+          <Async
+              loadOptions={this.getOptions}
+              value={this.state.stock.stock}
+              onChange={this.handleSelectChange.bind(this, 'stock')}
+          />
         </div>
-
-          <FormGroup controlId="formControlsSelect">
-            <ControlLabel>Type</ControlLabel>
-            <FormControl componentClass="select" placeholder="select"
+        <div className="form-group">
+          <label className="label-control">Type</label>
+          <Async
               value={this.state.stock.type}
-              onChange={this.handleChange.bind(this, 'type')}>
-              <option value="buy">Buy</option>
-              <option value="sell">Sell</option>
-            </FormControl>
-          </FormGroup>
+              onChange={this.handleSelectChange.bind(this, 'type')}
+              loadOptions={this.getTradeTypeOptions}
+          />
+        </div>
 
         <div className="form-group">
           <label className="label-control">Quantity</label>
@@ -87,6 +121,15 @@ export class StocksEdit extends React.Component {
             className="form-control"
             value={this.state.stock.quantity}
             onChange={this.handleChange.bind(this, 'quantity')} />
+        </div>
+
+        <div className="form-group">
+          <label className="label-control">Price</label>
+          <input
+            type="number"
+            className="form-control"
+            value={this.state.stock.price}
+            onChange={this.handleChange.bind(this, 'price')} />
         </div>
 
         <button type="submit" className="btn btn-default">

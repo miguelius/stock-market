@@ -46,7 +46,7 @@ export function createStock(action$) {
     .switchMap(stock => {
       return Observable.merge(
         Observable.fromPromise(
-          axios.post(`http://localhost:8081/stock`, stock)
+          axios.post(`http://localhost:8081/trade`, stock)
         ).map(res => stocksActions.createStockSuccess(res.data)),
         Observable.of(push('/stocks'))
       );
